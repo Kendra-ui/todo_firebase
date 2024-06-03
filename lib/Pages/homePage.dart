@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project1/Account/signin.dart';
 import 'package:project1/Pages/TodoCard.dart';
 import 'package:project1/Pages/ViewData.dart';
 import 'package:project1/Pages/addTask.dart';
-import 'package:project1/main_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,10 +22,28 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  final Stream<QuerySnapshot> _stream =
-      FirebaseFirestore.instance.collection('Todo').snapshots();
+  final auth = FirebaseAuth.instance;
+
+  Stream<QuerySnapshot> getTaskStream() {
+    User? user = auth.currentUser;
+    return FirebaseFirestore.instance
+        .collection('Todo')
+        .where('userId', isEqualTo: user?.uid)
+        .snapshots();
+  }
+
   List<Select> selected = [];
-  final auth = Auth();
+
+  Future<void> signOut() async {
+    try {
+      await auth.signOut();
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (BuildContext context) => const SignIn()),
+      );
+    } catch (e) {
+      print("Error signing out: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +63,11 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(35),
+          preferredSize: const Size.fromHeight(35),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: EdgeInsets.only(left: 22),
+              padding: const EdgeInsets.only(left: 22),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -62,15 +80,12 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   GestureDetector(
-                      onTap: () async {
-                        await auth.signout();
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (BuildContext context) => const SignIn()));
-                      },
-                      child: const Icon(
-                        Icons.logout,
-                        color: Colors.white,
-                      ))
+                    onTap: signOut,
+                    child: const Icon(
+                      Icons.logout,
+                      color: Colors.white,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -130,7 +145,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
               StreamBuilder<QuerySnapshot>(
-                  stream: _stream,
+                  stream: getTaskStream(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return const Center(

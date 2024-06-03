@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project1/Account/signin.dart';
 import 'package:project1/main_page.dart';
@@ -25,15 +26,24 @@ class _AddtaskState extends State<Addtask> {
   }
 
   Future<void> addTask() async {
-    try {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Get the user's unique ID
+      String userId = user.uid;
+
+      // Add task to Firestore under the user's collection
       await FirebaseFirestore.instance.collection('Todo').add({
         'title': titleController.text.trim(),
         'description': _taskController.text.trim(),
+        'userId': userId,
+      }).then((_) {
+        print('Task added successfully');
+      }).catchError((error) {
+        print('Failed to add task: $error');
       });
-      print('Task added successfully');
-      Navigator.pop(context); // Navigate back after adding the task
-    } catch (error) {
-      print('Failed to add task: $error');
+
+      // Go back to the previous page
+      Navigator.pop(context);
     }
   }
 
