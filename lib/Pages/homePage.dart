@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:project1/Account/signin.dart';
 import 'package:project1/Pages/TodoCard.dart';
 import 'package:project1/Pages/ViewData.dart';
 import 'package:project1/Pages/addTask.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -41,19 +43,33 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        bottom: const PreferredSize(
+        bottom: PreferredSize(
           preferredSize: Size.fromHeight(35),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: EdgeInsets.only(left: 22),
-              child: Text(
-                "Friday 31",
-                style: TextStyle(
-                  fontSize: 34,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Friday 31",
+                    style: TextStyle(
+                      fontSize: 34,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  GestureDetector(
+                      onTap: () async {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (BuildContext context) => const SignIn()));
+                      },
+                      child: const Icon(
+                        Icons.logout,
+                        color: Colors.white,
+                      ))
+                ],
               ),
             ),
           ),

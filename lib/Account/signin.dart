@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:project1/Account/signup.dart';
 import 'package:project1/Pages/homePage.dart';
+import 'package:project1/Account/signup.dart';
 import 'package:project1/main_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -12,11 +13,9 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   final _auth = Auth();
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool login = false;
 
   @override
   void dispose() {
@@ -91,14 +90,22 @@ class _SignInState extends State<SignIn> {
               SizedBox(height: MediaQuery.of(context).size.height / 30),
               ElevatedButton(
                 onPressed: () async {
-                  final user = await _auth.signInUserWithEmailAndPassword(
-                      emailController.text.trim(),
-                      passwordController.text.trim());
-                  if (user != null) {
-                    print("success");
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (BuildContext context) => const HomePage()));
+                  if (_formKey.currentState!.validate()) {
+                    final user = await _auth.signInUserWithEmailAndPassword(
+                        emailController.text.trim(),
+                        passwordController.text.trim());
+                    if (user != null) {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      prefs.setBool('isLoggedIn', true);
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                const HomePage()),
+                      );
+                    } else {
+                      // Handle sign-in error
+                    }
                   }
                 },
                 child: const Text('Sign in'),
