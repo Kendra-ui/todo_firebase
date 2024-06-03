@@ -34,19 +34,25 @@ class Auth {
   Future<void> storeUser(User? user) async {
     if (user != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isLoggedIn', true);
+      await prefs.setBool('email', true);
     }
   }
 
   Future<void> signout() async {
-    try {
-      await _auth.signOut();
-      SharedPreferences pref = await SharedPreferences.getInstance();
-      pref.remove('email');
-      await storage.delete(key: 'token');
-      await storage.delete(key: 'user');
-    } catch (e) {
-      print("Error signing out: $e");
-    }
+  try {
+    // Remove the login status flag from shared_preferences
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    await pref.remove('email');
+
+    // Sign out the user from Firebase Authentication
+    await _auth.signOut();
+
+    // Clear the token and user data from secure storage
+    await storage.delete(key: 'token');
+    await storage.delete(key: 'user');
+  } catch (e) {
+    print("Error signing out: $e");
   }
+}
+
 }

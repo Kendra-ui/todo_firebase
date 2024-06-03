@@ -97,7 +97,7 @@ class _SignInState extends State<SignIn> {
                     if (user != null) {
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
-                      prefs.setBool('isLoggedIn', true);
+                      prefs.setString('email', emailController.text);
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                             builder: (BuildContext context) =>

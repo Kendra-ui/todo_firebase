@@ -4,6 +4,7 @@ import 'package:project1/Account/signin.dart';
 import 'package:project1/Pages/TodoCard.dart';
 import 'package:project1/Pages/ViewData.dart';
 import 'package:project1/Pages/addTask.dart';
+import 'package:project1/main_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   final Stream<QuerySnapshot> _stream =
       FirebaseFirestore.instance.collection('Todo').snapshots();
   List<Select> selected = [];
+  final auth = Auth();
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +63,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   GestureDetector(
                       onTap: () async {
+                        await auth.signout();
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                             builder: (BuildContext context) => const SignIn()));
                       },

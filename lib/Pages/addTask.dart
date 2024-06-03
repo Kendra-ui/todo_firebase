@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:project1/Account/signin.dart';
+import 'package:project1/main_page.dart';
 
 class Addtask extends StatefulWidget {
   const Addtask({super.key});
@@ -14,21 +15,26 @@ class _AddtaskState extends State<Addtask> {
   final titleController = TextEditingController();
   int _selectedIndex =
       1; // To highlight the "Add" button in the bottom navigation
+  final auth = Auth();
+
+  @override
+  void dispose() {
+    _taskController.dispose();
+    titleController.dispose();
+    super.dispose();
+  }
 
   Future<void> addTask() async {
-    // Get the current user ID
-
-    // Add task to Firestore under the user's collection
-    await FirebaseFirestore.instance.collection('Todo').add({
-      'title': titleController.text.trim(),
-      'description': _taskController.text.trim(),
-    }).then((_) {
+    try {
+      await FirebaseFirestore.instance.collection('Todo').add({
+        'title': titleController.text.trim(),
+        'description': _taskController.text.trim(),
+      });
       print('Task added successfully');
-    }).catchError((error) {
+      Navigator.pop(context); // Navigate back after adding the task
+    } catch (error) {
       print('Failed to add task: $error');
-    });
-    // ignore: use_build_context_synchronously
-    Navigator.pop(context);
+    }
   }
 
   void _onItemTapped(int index) {
@@ -38,7 +44,7 @@ class _AddtaskState extends State<Addtask> {
     if (index == 0) {
       Navigator.pop(context); // Go back to the previous page
     }
-    // You can handle other index cases here if needed
+    // Handle other index cases if needed
   }
 
   @override
@@ -114,10 +120,11 @@ class _AddtaskState extends State<Addtask> {
                         color: Colors.white),
                   ),
                   GestureDetector(
-                      onTap: () => Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const SignIn())),
+                      onTap: () async {
+                        await auth.signout();
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (BuildContext context) => const SignIn()));
+                      },
                       child: const Icon(
                         Icons.logout,
                         color: Colors.white,
@@ -174,13 +181,13 @@ class _AddtaskState extends State<Addtask> {
         height: 70,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            color: Color.fromARGB(255, 255, 255, 255),
+            color: const Color.fromARGB(255, 255, 255, 255),
             borderRadius: BorderRadius.circular(12)),
         child: TextFormField(
           controller: titleController,
           decoration: const InputDecoration(
-            hintText: "title",
-            hintStyle: TextStyle(color: Colors.white),
+            hintText: "Title",
+            hintStyle: TextStyle(color: Colors.black),
             filled: true,
             fillColor: Colors.transparent,
             enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
@@ -199,14 +206,14 @@ class _AddtaskState extends State<Addtask> {
         height: 150,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            color: Color.fromARGB(255, 255, 255, 255),
+            color: const Color.fromARGB(255, 255, 255, 255),
             borderRadius: BorderRadius.circular(12)),
         child: TextFormField(
           controller: _taskController,
           maxLines: null,
           decoration: const InputDecoration(
             hintText: "Description",
-            hintStyle: TextStyle(color: Colors.white),
+            hintStyle: TextStyle(color: Colors.black),
             filled: true,
             fillColor: Colors.transparent,
             enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),

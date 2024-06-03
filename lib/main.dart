@@ -8,19 +8,20 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-  runApp(MainApp(isLoggedIn: isLoggedIn));
+  var email = prefs.getString('email');
+  print(email);
+  runApp(MainApp(email: email));
 }
 
 class MainApp extends StatelessWidget {
-  final bool isLoggedIn;
-  const MainApp({Key? key, required this.isLoggedIn}) : super(key: key);
+  final String? email;
+  const MainApp({Key? key, required this.email}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: isLoggedIn ? const HomePage() : const Signup(),
+      home: email != null ? const HomePage() : const Signup(),
     );
   }
 }
