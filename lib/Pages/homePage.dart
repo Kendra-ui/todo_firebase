@@ -24,6 +24,7 @@ class _HomePageState extends State<HomePage> {
 
   final auth = FirebaseAuth.instance;
 
+//displayiing task for a particular user
   Stream<QuerySnapshot> getTaskStream() {
     User? user = auth.currentUser;
     return FirebaseFirestore.instance

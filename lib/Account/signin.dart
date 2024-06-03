@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:project1/Pages/homePage.dart';
 import 'package:project1/Account/signup.dart';
+import 'package:project1/Pages/homePage.dart';
 import 'package:project1/main_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,15 +13,49 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   final _auth = Auth();
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _loginError = false;
+  String _errorMessage = '';
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _signIn() async {
+    setState(() {
+      _loginError = false;
+      _errorMessage = '';
+    });
+
+    if (_formKey.currentState?.validate() ?? false) {
+      final user = await _auth.signInUserWithEmailAndPassword(
+        emailController.text.trim(),
+        passwordController.text.trim(),
+      );
+
+      if (user != null) {
+        SharedPreferences pref = await SharedPreferences.getInstance();
+        await pref.setString('email', emailController.text.trim());
+        print("Sign in success");
+
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+              builder: (BuildContext context) => const HomePage()),
+        );
+      } else {
+        setState(() {
+          _loginError = true;
+          _errorMessage = 'Incorrect username or password. Please try again.';
+        });
+      }
+    }
   }
 
   @override
@@ -37,7 +71,7 @@ class _SignInState extends State<SignIn> {
             children: [
               SizedBox(height: MediaQuery.of(context).size.height / 10),
               const Text(
-                "Welcome back !",
+                "Welcome back!",
                 style: TextStyle(color: Colors.black, fontSize: 25),
               ),
               Padding(
@@ -87,27 +121,17 @@ class _SignInState extends State<SignIn> {
                   ),
                 ),
               ),
+              if (_loginError) // Conditionally display the error message
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    _errorMessage,
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  ),
+                ),
               SizedBox(height: MediaQuery.of(context).size.height / 30),
               ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    final user = await _auth.signInUserWithEmailAndPassword(
-                        emailController.text.trim(),
-                        passwordController.text.trim());
-                    if (user != null) {
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      prefs.setString('email', emailController.text);
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                const HomePage()),
-                      );
-                    } else {
-                      // Handle sign-in error
-                    }
-                  }
-                },
+                onPressed: _signIn,
                 child: const Text('Sign in'),
               ),
               Row(
@@ -115,15 +139,14 @@ class _SignInState extends State<SignIn> {
                 children: [
                   const Text(
                     "Don't have an account?",
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
+                    style: TextStyle(color: Colors.black),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
-                            builder: (BuildContext context) => const Signup()),
+                          builder: (BuildContext context) => const Signup(),
+                        ),
                       );
                     },
                     child: const Text(
