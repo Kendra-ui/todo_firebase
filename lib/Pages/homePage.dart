@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
         title: const Padding(
           padding: EdgeInsets.only(right: 45.0),
           child: Text(
-            "Today Schedule",
+            " To-do List",
             style: TextStyle(
               fontSize: 34,
               fontWeight: FontWeight.bold,
@@ -158,6 +158,9 @@ class _HomePageState extends State<HomePage> {
                         itemCount: snapshot.data?.docs.length,
                         itemBuilder: (context, index) {
                           var document = snapshot.data?.docs[index];
+                          var data = document?.data() as Map<String, dynamic>?;
+                          var timestamp = data?['createdAt'] as Timestamp?;
+                          var createdAt = timestamp?.toDate();
                           selected.add(Select(
                               check: false, id: snapshot.data!.docs[index].id));
                           return InkWell(
@@ -175,7 +178,9 @@ class _HomePageState extends State<HomePage> {
                               title: document?['title'] ?? '',
                               iconData: Icons.alarm,
                               iconColor: Colors.blue,
-                              time: '',
+                              time: createdAt != null
+                                  ? "${createdAt.hour}:${createdAt.minute}"
+                                  : '',
                               check: selected[index].check,
                               iconBgColor: Colors.white,
                               onChanged: onChanged,

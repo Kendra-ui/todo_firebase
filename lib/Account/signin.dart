@@ -61,6 +61,7 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Container(
         constraints: const BoxConstraints(),
         width: MediaQuery.of(context).size.width,
@@ -72,7 +73,7 @@ class _SignInState extends State<SignIn> {
               SizedBox(height: MediaQuery.of(context).size.height / 10),
               const Text(
                 "Welcome back!",
-                style: TextStyle(color: Colors.black, fontSize: 25),
+                style: TextStyle(color: Colors.white, fontSize: 25),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 20.0),
@@ -139,7 +140,7 @@ class _SignInState extends State<SignIn> {
                 children: [
                   const Text(
                     "Don't have an account?",
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                   ),
                   TextButton(
                     onPressed: () {
@@ -152,7 +153,7 @@ class _SignInState extends State<SignIn> {
                     child: const Text(
                       "Sign Up",
                       style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
+                          color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],

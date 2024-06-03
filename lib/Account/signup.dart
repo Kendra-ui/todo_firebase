@@ -22,6 +22,7 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: SafeArea(
           child: SingleChildScrollView(
         child: Container(
@@ -33,7 +34,7 @@ class _SignupState extends State<Signup> {
               SizedBox(height: MediaQuery.of(context).size.height / 10),
               const Text(
                 "Create your account",
-                style: TextStyle(color: Colors.black, fontSize: 25),
+                style: TextStyle(color: Colors.white, fontSize: 25),
               ),
               Padding(
                   padding: const EdgeInsets.only(top: 20.0),
@@ -102,18 +103,22 @@ class _SignupState extends State<Signup> {
                 children: [
                   const Text(
                     "Already have an account?",
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                   ),
                   TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (BuildContext context) => const SignIn()));
-                      },
-                      child: const Text(
-                        "Sign In",
-                        style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
-                      )),
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => const SignIn(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "Sign In",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ],
               )
             ],

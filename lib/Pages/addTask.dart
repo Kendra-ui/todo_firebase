@@ -36,6 +36,7 @@ class _AddtaskState extends State<Addtask> {
         'title': titleController.text.trim(),
         'description': _taskController.text.trim(),
         'userId': userId,
+        'createdAt': FieldValue.serverTimestamp(),
       }).then((_) {
         print('Task added successfully');
       }).catchError((error) {
