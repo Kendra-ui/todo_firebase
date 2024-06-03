@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project1/Account/signin.dart';
 
@@ -28,6 +27,8 @@ class _AddtaskState extends State<Addtask> {
     }).catchError((error) {
       print('Failed to add task: $error');
     });
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context);
   }
 
   void _onItemTapped(int index) {
